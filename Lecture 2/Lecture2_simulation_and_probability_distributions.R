@@ -55,6 +55,8 @@ sprintf("Answer %.2f", result)
 data.length = 1e6
 x <- rnomr( data.length, 100, 15)
 x <- sort(x)
+result <- x[ ceil( 0.8 * data.length) ]
+sprintf("Answer %.2f", result)
 
 
 # we can check graphically the result: 
