@@ -42,11 +42,19 @@ sprintf("Answer %.2f", answer)
 #             percentile?
 mean <- 100
 sd <- 15
-IQ <- seq( -4, 4, length=100)*sd + mean
-dIQ <- dnorm(IQ, mean = mean, sd = sd)
-plot( IQ, dIQ)
+result <- qnorm( 0.8, 100, 15)
 result <- quantile( IQ, 0.8)
 sprintf("Answer %.2f", result)
+
+# there is another possibility using a random sample...
+x <- rnorm( 10000, 100, 15)
+result <- quantile(x, 0.8)
+sprintf("Answer %.2f", result)
+
+# another one, sorting the data manually
+data.length = 1e6
+x <- rnomr( data.length, 100, 15)
+x <- sort(x)
 
 
 # we can check graphically the result: 
