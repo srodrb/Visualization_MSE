@@ -1,0 +1,188 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx, verbatim}
+\setlength{\textwidth}{6.5in} 
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{0in} 
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{-1.5cm}
+
+\begin{document}
+\begin{center}
+{\bf \Large Sweave Example\\}
+ \end{center}
+
+\noindent Simple example
+ 
+<<test1>>=
+a=1
+b=4
+a+b
+print("hello")
+@
+
+\noindent We can also include {\tt R code} in the text. Example a+b= \Sexpr{a+b}
+
+
+%-------------------------------------------
+\section{Sweave's options}
+%--------------------------------------------
+
+\noindent Show the result, no {\tt R code}:
+
+<<test2, echo=FALSE>>=
+a=1
+b=4
+a+b
+print("hello")
+@
+
+\noindent Do not evaluate the {\tt R} code:
+
+<<test3, eval=FALSE>>=
+a=1
+b=4
+a+b
+print("hello")
+@
+
+
+\noindent Evaluate {\tt R} code, do not show results in the console:
+
+<<test4, results=hide>>=
+a=1
+b=4
+a+b
+print("hello")
+@
+
+NOTE: Let's assume that we are interested in having all chunks with {\tt echo=FALSE, 
+results=hide}. This can be indicated in the preamble using {\tt SweaveOpts} :
+
+
+
+%-------------------------------------------
+\section{Figures}
+%--------------------------------------------
+A figure can be included in the document by idicating {\tt fig=TRUE}:
+
+<<test5, fig=TRUE>>=
+plot(1:10, col="red", pch=19)
+@
+
+\newpage
+
+%------------------------------------
+\subsection{Anything else about figures}
+%-------------------------------------
+
+A nicer figure can be obtained by adding captions, or changing size:
+
+\begin{figure}[h]
+<<test6, fig=TRUE, height=4, width=6>>=
+par(mfrow=c(1,2))
+plot(1:10, col="green", pch=21)
+barplot(height=sample(1:10,5), names=LETTERS[1:5], col=1:5)
+@
+\caption{Figure 1:10 using a barplot inside a 4x6 inches figure}
+\end{figure}
+
+\newpage
+
+%------------------------------------
+\section{Creating tables}
+%-------------------------------------
+
+\noindent Let's include a table using the {\tt women} dataset (included by default in {\tt R})
+
+<<women>>=
+require(xtable)
+myTable <- summary(women)
+@
+
+\noindent This table can also be included in LaTeX format:
+
+
+\begin{center}
+\begin{tabular}{rrrrrrrr} 
+
+<<manualtab, results=tex,echo=FALSE>>=
+nr = nrow(myTable); nc = ncol(myTable)
+for (i in 1:nr)
+  for(j in 1:nc) {
+    cat("$", myTable[i,j], "$")
+    if(j < nc)
+    cat("&")
+    else
+    cat("\\\\\n")
+  }
+@
+\end{tabular}
+\end{center}
+
+\noindent Altough it is even more easy to use the {\tt R} package {\tt xtable}. 
+
+<<xtable1, results=tex>>=
+xtab<-xtable(myTable)
+print(xtab, floating=FALSE)
+@
+
+
+%------------------------------------
+\subsection{More about tables}
+%-------------------------------------
+
+Nicer tables can be created, for instance, exluding the number of rows, or adding a caption. We can also make reference to this
+table. Therefore, we reference  Table~\ref{Table:women} in the text:
+
+
+<<xtable2, results=tex>>=
+xtab2<-xtable(myTable, caption="Summary of women data",  
+                       label="Table:women")
+print(xtab2, include.rownames = FALSE)
+@
+
+
+%------------------------------------
+\section{Creating pdf}
+%------------------------------------
+
+\noindent Just type  (NOTE: this folder must contiain \emph{Sweave.sty} file).
+
+<<creapdf, eval=FALSE>>=
+Sweave("SweaveExample.Rnw")
+system("pdflatex SweaveExample.tex")
+@
+
+\noindent Using {\tt Rstudio} is even easier. Just click 'pdf' button. NOTE: pdf must be closed, if not an error message is obtained.
+
+
+\noindent {\tt cacheSweave} package can be used when computing time is huge. 
+
+<<cacheSweave, eval=FALSE>>=
+library(cacheSweave)
+setCacheDir("cache") # por defecto es "." 
+Sweave("SweaveExample.tex", driver = cacheSweaveDriver)
+@
+
+%------------------------------------
+\section{Getting {\tt R} code}
+%------------------------------------
+
+\noindent R commands can be obtained in a {\tt .R} file by executing:
+
+<<stangle>>=
+Stangle("SweaveExample.Rnw")
+@
+
+\newpage
+%------------------------------------
+% Normalmente se incluye esto al final para que sea todo reproducible
+%------------------------------------
+\section{SessionInfo}
+%-------------------------------------
+
+<<sessionInfo>>=
+ sessionInfo()
+@ 
+ 
+\end{document}
